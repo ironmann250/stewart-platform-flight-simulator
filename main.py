@@ -2,7 +2,7 @@ from ctypes import *
 import time,com_serial,utils
 import joystick_controller 
 #define and initialize devices
-inverse_kinematics_solver = CDLL("./RSS6RBT_InverseDLL.dll")
+inverse_kinematics_solver = CDLL("./inverse_kinematics_lib/RSS6RBT_InverseDLL.dll")
 inverse_kinematics_results = (c_double*6)()
 arduino_com=com_serial.Com_serial("COM6",9600)
 arduino_com.start()
