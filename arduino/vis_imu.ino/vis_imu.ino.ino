@@ -1,7 +1,3 @@
-/*
-   Arduino and MPU6050 Accelerometer and Gyroscope Sensor Tutorial
-   by Dejan, https://howtomechatronics.com
-*/
 #include <Wire.h>
 const int MPU = 0x68; // MPU6050 I2C address
 float AccX, AccY, AccZ;
