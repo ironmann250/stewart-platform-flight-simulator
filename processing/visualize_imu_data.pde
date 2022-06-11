@@ -1,7 +1,3 @@
-/*
-    Arduino and MPU6050 IMU - 3D Visualization Example 
-     by Dejan, https://howtomechatronics.com
-*/
 import processing.serial.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
