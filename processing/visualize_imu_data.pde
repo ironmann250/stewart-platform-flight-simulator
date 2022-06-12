@@ -6,7 +6,7 @@ String data="";
 float roll, pitch,yaw;
 void setup() {
   size (2560, 1440, P3D);
-  myPort = new Serial(this, "COM10", 115200); // starts the serial communication
+  myPort = new Serial(this, "COM11", 115200); // starts the serial communication
   myPort.bufferUntil('\n');
 }
 void draw() {

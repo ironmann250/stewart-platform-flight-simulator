@@ -1,4 +1,3 @@
-#include <ServoEasing.hpp>
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -28,8 +27,8 @@ VectorFloat gravity;    // [x, y, z]            gravity vector
 float euler[3];         // [psi, theta, phi]    Euler angle container
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
-ServoEasing servo1,servo2,servo3,servo4,servo5,servo6;
-String inputString;
+// packet structure for InvenSense teapot demo
+uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 
 volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
 void dmpDataReady() {
@@ -37,15 +36,6 @@ void dmpDataReady() {
 }
 
 void setup() {
-  servo1.attach(12);
-  servo2.attach(11);
-  servo3.attach(10);
-  servo4.attach(9);
-  servo5.attach(8);
-  servo6.attach(7);
-
-  Serial.begin(115200);
-  setSpeedForAllServos(60);
   // put your setup code here, to run once:
   // join I2C bus (I2Cdev library doesn't do this automatically)
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -117,68 +107,14 @@ void setup() {
 
     // configure LED for output
     pinMode(LED_PIN, OUTPUT);
-  delay(500);
+    
+    
 }
 
-void loop() 
-  {
-    while(Serial.available())
-  {
+void loop() {
+  // put your main code here, to run repeatedly:
+ read_imu(); 
   
-    char inChar = (char)Serial.read();
-    inputString += inChar;
-    if(inChar == '\n')
-    {
-      handle_incoming(inputString);
-      //Serial.println(inputString);
-      inputString = "";
-    }
-  }
-  read_imu();
-}
-
-void handle_incoming(String inputString)
-{
-  char receivedChars[inputString.length()];
-  for(int i=0;i<inputString.length();i++){
-    receivedChars[i] = inputString[i];
-  }
-  
-  char * strtokIndx; // this is used by strtok() as an index
-  
-  strtokIndx = strtok(receivedChars,",");      // get the first part - the string
-  float sservo1= atoi(strtokIndx); // copy it to messageFromPC
-  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
-  float sservo2 = atoi(strtokIndx);
-  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
-  float sservo3 = atoi(strtokIndx);
-  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
-  float sservo4 = atoi(strtokIndx);
-  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
-  float sservo5 = atoi(strtokIndx);
-  strtokIndx = strtok(NULL, "\n"); // this continues where the previous call left off
-  float sservo6 = atoi(strtokIndx); 
-  //Serial.println(sservo1);
-  //Serial.println(sservo2);
-  //Serial.println(sservo3);
-  //Serial.println(sservo4);
-  //Serial.println(sservo5);
-  //Serial.println(sservo6);
-
-  //phi is the "tool angle" 
-  goto_angle(sservo1,sservo2,sservo3,sservo4,sservo5,sservo6);
-}
-
-void goto_angle(float sservo1,float sservo2,float sservo3,float sservo4,float sservo5,float sservo6)
-{
-  setSpeedForAllServos(60);
-    servo1.setEaseTo(180-sservo1);
-    servo2.setEaseTo(sservo2);
-    servo3.setEaseTo(180-sservo3);
-    servo4.setEaseTo(sservo4);
-    servo5.setEaseTo(180-sservo5);
-    servo6.setEaseTo(sservo6);
-    synchronizeAllServosStartAndWaitForAllServosToStop();
 }
 
 void read_imu()
@@ -186,6 +122,7 @@ void read_imu()
 
   if (!dmpReady) return;
   if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) { 
+      #ifdef OUTPUT_READABLE_YAWPITCHROLL
             // display Euler angles in degrees
             mpu.dmpGetQuaternion(&q, fifoBuffer);
             mpu.dmpGetGravity(&gravity, &q);
@@ -197,6 +134,7 @@ void read_imu()
             Serial.print(ypr[1] * 180/M_PI);
             Serial.print("/");
             Serial.println(ypr[2] * 180/M_PI);
+        #endif
         // blink LED to indicate activity
         blinkState = !blinkState;
         digitalWrite(LED_PIN, blinkState);
