@@ -10,7 +10,7 @@ fg_com=flightgear_interface.FG_com()
 fg_com.start()
 fg_com.connect_and_wait_until_ready()
 #user_inputs=joystick_controller.XboxController() #no need pass it to fg
-time.sleep(15) #wait for everything to sync
+
 
 #define constants and global vars
 LIMIT_YAW=[-17,17]
@@ -18,13 +18,20 @@ LIMIT_PITCH=[-13,13]
 LIMIT_ROLL=[-13,13]
 OPERATING_Z=194
 DELAY_TIME=1
-#main loop
+
 #put platform at 0
+ret=inverse_kinematics_solver.InK6RSS(c_double(0), c_double(0), c_double(OPERATING_Z), c_double(0), c_double(0), c_double(0), pointer(inverse_kinematics_results))    
+command=utils.make_command(inverse_kinematics_results,ret)
+arduino_com.send(command)
+time.sleep(15) #wait for everything to sync
+
+#main loop
+
 while True:
     #read plane pitch
     plane_pitch=float(fg_com.get_param("pitch"))
     #calculate inverse kinematics solution
-    ret=inverse_kinematics_solver.InK6RSS(c_double(1), c_double(1), c_double(OPERATING_Z), c_double(1), c_double(plane_pitch), c_double(1), pointer(inverse_kinematics_results))    
+    ret=inverse_kinematics_solver.InK6RSS(c_double(0), c_double(0), c_double(OPERATING_Z), c_double(0), c_double(plane_pitch), c_double(0), pointer(inverse_kinematics_results))    
     #if results are valid send it to the arduino
     command=utils.make_command(inverse_kinematics_results,ret)
     #put platform at plane pitch
