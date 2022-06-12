@@ -45,7 +45,7 @@ void setup() {
   servo6.attach(7);
 
   Serial.begin(115200);
-  setSpeedForAllServos(60);
+  setSpeedForAllServos(300);
   // put your setup code here, to run once:
   // join I2C bus (I2Cdev library doesn't do this automatically)
     #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -171,7 +171,7 @@ void handle_incoming(String inputString)
 
 void goto_angle(float sservo1,float sservo2,float sservo3,float sservo4,float sservo5,float sservo6)
 {
-  setSpeedForAllServos(60);
+  setSpeedForAllServos(300);
     servo1.setEaseTo(180-sservo1);
     servo2.setEaseTo(sservo2);
     servo3.setEaseTo(180-sservo3);
