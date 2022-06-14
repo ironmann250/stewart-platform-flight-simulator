@@ -1,4 +1,7 @@
+#include <Servo.h>
+
 #include <ServoEasing.hpp>
+
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -28,7 +31,8 @@ VectorFloat gravity;    // [x, y, z]            gravity vector
 float euler[3];         // [psi, theta, phi]    Euler angle container
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
-ServoEasing servo1,servo2,servo3,servo4,servo5,servo6;
+//ServoEasing servo1,servo2,servo3,servo4,servo5,servo6;
+Servo servo1,servo2,servo3,servo4,servo5,servo6;
 String inputString;
 
 volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
@@ -56,7 +60,7 @@ void setup() {
     #endif
 
     Serial.begin(115200);
-    while (!Serial); 
+    //while (!Serial); 
 
     // initialize device
     Serial.println(F("Initializing I2C devices..."));
@@ -129,10 +133,12 @@ void loop()
     inputString += inChar;
     if(inChar == '\n')
     {
+      read_imu();
       handle_incoming(inputString);
       //Serial.println(inputString);
       inputString = "";
     }
+     read_imu();
   }
   read_imu();
 }
@@ -171,14 +177,17 @@ void handle_incoming(String inputString)
 
 void goto_angle(float sservo1,float sservo2,float sservo3,float sservo4,float sservo5,float sservo6)
 {
-  setSpeedForAllServos(300);
-    servo1.setEaseTo(180-sservo1);
-    servo2.setEaseTo(sservo2);
-    servo3.setEaseTo(180-sservo3);
-    servo4.setEaseTo(sservo4);
-    servo5.setEaseTo(180-sservo5);
-    servo6.setEaseTo(sservo6);
-    synchronizeAllServosStartAndWaitForAllServosToStop();
+  //etSpeedForAllServos(300);
+    servo1.write(180-sservo1);
+    //delay(5);
+    servo2.write(sservo2);
+    //delay(5);
+    servo3.write(180-sservo3);
+
+    servo4.write(sservo4);
+    servo5.write(180-sservo5);
+    servo6.write(sservo6);
+    //synchronizeAllServosStartAndWaitForAllServosToStop();
 }
 
 void read_imu()

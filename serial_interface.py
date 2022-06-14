@@ -2,7 +2,7 @@ import time
 import serial
 
 class Com_serial():
-    def __init__(self,port,baudrate=9600,timeout=0.2):
+    def __init__(self,port,baudrate=9600,timeout=0.05):
         self.port=port
         self.baudrate=baudrate
         self.device=None
