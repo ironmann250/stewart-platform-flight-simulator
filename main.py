@@ -2,7 +2,7 @@ from ctypes import *
 import time,serial_interface,utils,flightgear_interface
 import joystick_controller 
 from multiprocessing import Process, freeze_support
-import visualize_3d
+import visualize_3d_rotation
 #define and initialize devices
 inverse_kinematics_solver = CDLL("./libs/RSS6RBT_InverseDLL.dll")
 inverse_kinematics_results = (c_double*6)()
@@ -40,6 +40,7 @@ command=utils.make_command(inverse_kinematics_results,ret)
 #arduino_com.send(command)
 sign_flag2=1
 pitch=-13
+plane_yaw=0
 '''
 give new and old angle
 then move 0.5 deg to new angle
@@ -54,11 +55,22 @@ while True:
     #     sign_flag2=1
     pitch=pitch+sign_flag2
     plane_pitch=fg_com.get_param("pitch")
-    plane_pitch=float(plane_pitch) if plane_pitch != None else 0
+    plane_pitch=float(plane_pitch) if plane_pitch not in [None,'None'] else 0
     plane_roll=fg_com.get_param("roll")
-    plane_roll=float(plane_roll) if plane_roll != None else 0
-    #print(plane_pitch)
-    #print(plane_roll)
+    plane_roll=float(plane_roll) if plane_roll not in [None,'None'] else 0
+    plane_yaw_rate=fg_com.get_param("yaw-rate")
+    plane_yaw_rate=float(plane_yaw_rate) if plane_yaw_rate not in [None,'None'] else 0
+    
+    plane_yaw+=plane_yaw_rate
+    if plane_yaw < LIMIT_YAW[0]:
+        plane_yaw=LIMIT_YAW[0]
+    if plane_yaw > LIMIT_YAW[1]:
+        plane_yaw=LIMIT_YAW[1]
+
+    print(plane_pitch)
+    print(plane_roll)
+    print(plane_yaw)
+
     #plane_pitch=pitch
     oldpitch=newpitch
     newpitch=plane_pitch
@@ -67,8 +79,14 @@ while True:
     oldroll=newroll
     newroll=plane_roll
     targetroll=oldroll
+
+    oldyaw=newyaw
+    newyaw=plane_yaw
+    targetyaw=oldyaw
     
-    while ((abs(abs(newpitch)-abs(targetpitch))>errortolerance)and(abs(abs(newroll)-abs(targetroll))>errortolerance)):
+    while ((abs(abs(newpitch)-abs(targetpitch))>errortolerance) and #see if we reached the target pitch
+    (abs(abs(newroll)-abs(targetroll))>errortolerance)): #see if we reached the target roll 
+    #(abs(abs(newyaw)-abs(targetyaw))>errortolerance))#see if we reached the target yaw #still testing yaw
         if newpitch<oldpitch:
             sign_flag=-0.25
         else:
@@ -80,6 +98,12 @@ while True:
         else:
             sign_flag=0.25
         targetroll+=sign_flag
+
+        if newyaw<oldyaw:
+            sign_flag=-0.25
+        else:
+            sign_flag=0.25
+        targetyaw+=sign_flag
         #calculate inverse kinematics solution
         ret=inverse_kinematics_solver.InK6RSS(c_double(0), c_double(0), c_double(OPERATING_Z), c_double(0), c_double(targetpitch), c_double(targetroll), pointer(inverse_kinematics_results))    
         #if results are valid send it to the arduino
@@ -92,11 +116,12 @@ while True:
         #print(arduino_com.read_position_blocking())
         #print(arduino_com.device.readline())
         print(command)
-        print(plane_pitch,targetpitch,plane_roll,targetroll)
-        visualize_3d.update(targetroll,targetpitch,0)
+        print(plane_pitch,targetpitch,plane_roll,targetroll,plane_yaw,targetyaw)
+        visualize_3d_rotation.update(targetroll,targetpitch,0,debug=False)
         time.sleep(0.04)
     newpitch=targetpitch
     newroll=targetroll
+    newyaw=targetyaw
 
 # while True:
 #     #get user input
