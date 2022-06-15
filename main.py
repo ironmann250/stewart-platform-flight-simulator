@@ -38,6 +38,7 @@ errortolerance=0.7
 ret=inverse_kinematics_solver.InK6RSS(c_double(0), c_double(0), c_double(OPERATING_Z), c_double(0), c_double(0), c_double(0), pointer(inverse_kinematics_results))    
 command=utils.make_command(inverse_kinematics_results,ret)
 #arduino_com.send(command)
+
 sign_flag2=1
 pitch=-13
 plane_yaw=0
