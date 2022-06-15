@@ -1,1 +1,2 @@
 vpython==7.6.3
+pyserail==3.5
