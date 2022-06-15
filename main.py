@@ -24,7 +24,7 @@ DELAY_TIME=1
 newpitch=0
 newroll=0
 newyaw=0
-errortolerance=0.7
+errortolerance=0.3
 
 #time.sleep(15) #wait for everything to sync
 
@@ -49,7 +49,7 @@ then move 0.5 deg to new angle
 
 while True:
     #read plane pitch
-    freeze_support()
+    freeze_support() #so that flightgear;s process doesn't interfere
     # if pitch > 13:
     #     sign_flag2=-1
     # if pitch <-13:
@@ -67,6 +67,16 @@ while True:
         plane_yaw=LIMIT_YAW[0]
     if plane_yaw > LIMIT_YAW[1]:
         plane_yaw=LIMIT_YAW[1]
+
+    if plane_roll < LIMIT_ROLL[0]:
+        plane_roll=LIMIT_ROLL[0]
+    if plane_roll > LIMIT_ROLL[1]:
+        plane_roll=LIMIT_ROLL[1]
+
+    if plane_pitch < LIMIT_PITCH[0]:
+        plane_pitch=LIMIT_PITCH[0]
+    if plane_pitch > LIMIT_PITCH[1]:
+        plane_pitch=LIMIT_PITCH[1]
 
     print(plane_pitch)
     print(plane_roll)
@@ -89,24 +99,24 @@ while True:
     (abs(abs(newroll)-abs(targetroll))>errortolerance)): #see if we reached the target roll 
     #(abs(abs(newyaw)-abs(targetyaw))>errortolerance))#see if we reached the target yaw #still testing yaw
         if newpitch<oldpitch:
-            sign_flag=-0.25
+            sign_flag=-0.5
         else:
-            sign_flag=0.25
+            sign_flag=0.5
         targetpitch+=sign_flag
 
         if newroll<oldroll:
-            sign_flag=-0.25
+            sign_flag=-0.5
         else:
-            sign_flag=0.25
+            sign_flag=0.5
         targetroll+=sign_flag
 
         if newyaw<oldyaw:
-            sign_flag=-0.25
+            sign_flag=-0.5
         else:
-            sign_flag=0.25
+            sign_flag=0.5
         targetyaw+=sign_flag
         #calculate inverse kinematics solution
-        ret=inverse_kinematics_solver.InK6RSS(c_double(0), c_double(0), c_double(OPERATING_Z), c_double(0), c_double(targetpitch), c_double(targetroll), pointer(inverse_kinematics_results))    
+        ret=inverse_kinematics_solver.InK6RSS(c_double(0), c_double(0), c_double(OPERATING_Z), c_double(targetyaw), c_double(targetpitch), c_double(targetroll), pointer(inverse_kinematics_results))    
         #if results are valid send it to the arduino
         command=utils.make_command(inverse_kinematics_results,ret)
         #put platform at plane pitch
@@ -118,7 +128,7 @@ while True:
         #print(arduino_com.device.readline())
         print(command)
         print(plane_pitch,targetpitch,plane_roll,targetroll,plane_yaw,targetyaw)
-        visualize_3d_rotation.update(targetroll,targetpitch,0,debug=False)
+        visualize_3d_rotation.update(targetroll,targetpitch,targetyaw,debug=False)
         time.sleep(0.04)
     newpitch=targetpitch
     newroll=targetroll
