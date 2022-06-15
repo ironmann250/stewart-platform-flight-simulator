@@ -1,10 +1,8 @@
 from vpython import *
 from time import *
-import numpy as np
-import math
-
+PI=3.141592653589793
 scene.range=5
-toRad=2*np.pi/360
+toRad=2*PI/360
 toDeg=1/toRad
 scene.forward=vector(-1,-1,-1)
  
@@ -27,7 +25,7 @@ plane=compound([body,wings,rudder])
 def update(roll,pitch,yaw,debug=True):
     roll=roll*toRad
     pitch=pitch*toRad
-    yaw=yaw*toRad+np.pi
+    yaw=yaw*toRad+PI
     if debug:
         print("Roll=",roll*toDeg," Pitch=",pitch*toDeg,"Yaw=",yaw*toDeg)
     rate(50)
