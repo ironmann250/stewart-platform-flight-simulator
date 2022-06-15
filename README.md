@@ -12,7 +12,7 @@ pip install -r requirements.txt
 - or run the various tests on their own
 
 # todo
-- reliable and fast yaw control
+- ~~reliable and fast yaw control~~ done
 - PID control from IMU data
 
 
