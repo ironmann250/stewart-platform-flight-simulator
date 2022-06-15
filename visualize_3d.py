@@ -23,24 +23,25 @@ bBoard=box(length=6,width=2,height=.2,opacity=.8,pos=vector(0,0,0,))
 bn=box(length=1,width=.75,height=.1, pos=vector(-.5,.1+.05,0),color=color.blue)
 nano=box(lenght=1.75,width=.6,height=.1,pos=vector(-2,.1+.05,0),color=color.green)
 myObj=compound([bBoard,bn,nano])
-roll,yaw,pitch=[0,0,0]
 
-def update(roll,pitch,yaw):
+def update(roll,pitch,yaw,debug=True):
     roll=roll*toRad
     pitch=pitch*toRad
     yaw=yaw*toRad+np.pi
-    print("Roll=",roll*toDeg," Pitch=",pitch*toDeg,"Yaw=",yaw*toDeg)
+    if debug:
+        print("Roll=",roll*toDeg," Pitch=",pitch*toDeg,"Yaw=",yaw*toDeg)
     rate(50)
     k=vector(cos(yaw)*cos(pitch), sin(pitch),sin(yaw)*cos(pitch))
     y=vector(0,1,0)
     s=cross(k,y)
     v=cross(s,k)
+    vrot=v*cos(roll)+cross(k,v)*sin(roll)
  
     frontArrow.axis=k
-    sideArrow.axis=s
-    upArrow.axis=v
+    sideArrow.axis=cross(k,vrot)
+    upArrow.axis=vrot
     myObj.axis=k
-    myObj.up=v
+    myObj.up=vrot
     sideArrow.length=2
     frontArrow.length=4
     upArrow.length=1
