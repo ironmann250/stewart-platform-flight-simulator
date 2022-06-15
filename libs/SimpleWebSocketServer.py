@@ -1,7 +1,3 @@
-'''
-The MIT License (MIT)
-Copyright (c) 2013 Dave P.
-'''
 import socketserver
 import hashlib
 import base64
