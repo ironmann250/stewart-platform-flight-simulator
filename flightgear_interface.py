@@ -352,6 +352,8 @@ class FG_com():
                                   '--fg-scenery=' + flightgear_path + '\\data\\Scenery',
                                   '--aircraft=c172p',
                                   '--disable-random-objects',
+                                  '--altitude=5000', '--heading=0', '--vc=110',
+                                  '--prop:/engines/engine[0]/running=true',
                                   '--prop:/sim/rendering/random-vegetation=false',
                                   '--disable-ai-models',
                                   '--disable-ai-traffic',
