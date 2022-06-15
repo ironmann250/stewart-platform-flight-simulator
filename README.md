@@ -3,7 +3,7 @@
 
 # installation
 1. install flightgear [from here](https://www.flightgear.org/download/)
-2. install dependencies (only vpython is required)
+2. install dependencies
 ```bash
 pip install -r requirements.txt
 ```
