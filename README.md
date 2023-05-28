@@ -1,6 +1,6 @@
 # stewart platform flight simulator
-[![simulator demo](https://img.youtube.com/vi/xUb5XsIEXbc/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE "Video Title")
- this drives a stewart platform following what the plane does in the flightgear simulator
+this drives a stewart platform following what the plane does in the flightgear simulator, watch the demo below
+[![simulator demo](https://img.youtube.com/vi/xUb5XsIEXbc/0.jpg)](https://www.youtube.com/watch?v=xUb5XsIEXbc)
  
 # installation
 1. install flightgear [from here](https://www.flightgear.org/download/)
